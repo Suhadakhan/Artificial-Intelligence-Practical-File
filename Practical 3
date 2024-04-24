@@ -1,0 +1,110 @@
+import enum
+import time
+
+class Action(enum.Enum):
+    MoveDown = 1
+    MoveUp = 2
+    MoveLeft = 3
+    MoveRight = 4
+    NoAction = 0
+
+class Node:
+    def __init__(self, position=[], parent=None, action=Action.NoAction):
+        self.position = position
+        self.h = 0
+        self.f = 0
+        self.parent = parent
+        self.action = action
+
+    def __eq__(self, other):
+        return self.position == other.position
+
+    def __lt__(self, other):
+        return self.f < other.f
+
+    def __gt__(self, other):
+        return self.f > other.f
+
+    def __repr__(self):
+        return '\n'.join([
+            str(self.action), 
+            str(self.position[:3]), 
+            str(self.position[3:6]), 
+            str(self.position[6:9])
+        ]).replace("[", "").replace(']', '').replace(',', '').replace('0', '_')
+
+    def _h(self, goal):
+        return sum([1 if self.position[i] != goal.position[i] else 0 for i in range(9)])
+
+    def generatevalue(self, goal):
+        self.h = self._h(goal)
+        self.f = self.h
+
+    def possibleMoves(self):
+        successors = []
+        i = self.position.index(0)
+        # move down
+        if i in [3, 4, 5, 6, 7, 8]:
+            new_value = self.position[:]
+            new_value[i], new_value[i - 3] = new_value[i - 3], new_value[i]
+            successors.append(Node(new_value, self, Action.MoveDown))
+        # move up
+        if i in [0, 1, 2, 3, 4, 5]:
+            new_value = self.position[:]
+            new_value[i], new_value[i + 3] = new_value[i + 3], new_value[i]
+            successors.append(Node(new_value, self, Action.MoveUp))
+        # move left
+        if i in [0, 1, 3, 4, 6, 7]:
+            new_value = self.position[:]
+            new_value[i], new_value[i + 1] = new_value[i + 1], new_value[i]
+            successors.append(Node(new_value, self, Action.MoveLeft))
+        # move right
+        if i in [1, 2, 4, 5, 7, 8]:
+            new_value = self.position[:]
+            new_value[i], new_value[i - 1] = new_value[i - 1], new_value[i]
+            successors.append(Node(new_value, self, Action.MoveRight))
+        return successors
+
+def Best_FS(initial_node, Goal_Node):
+    Open_list = []
+    Close_list = []
+    Open_list.append(initial_node)
+    while len(Open_list) > 0:
+        Open_list.sort()
+        currentNode = Open_list.pop(0)
+        Close_list.append(currentNode)
+        if currentNode == Goal_Node:
+            # return Close_list # path
+            path = []
+            while currentNode != initial_node:
+                path.append(currentNode)
+                currentNode = currentNode.parent
+            return path[::-1]
+        all_successors = currentNode.possibleMoves()
+        for i in all_successors:
+            if i in Close_list:
+                continue
+            i.generatevalue(Goal_Node)
+            if can_add_to_open(Open_list, i):
+                Open_list.append(i)
+
+def can_add_to_open(Open_list, successors):
+    for i in Open_list:
+        if i == successors and successors.f >= i.f:
+            return False
+    return True
+
+initial_node = Node([2, 8, 3, 1, 6, 4, 7, 0, 5], None, Action.NoAction)
+currentNode = initial_node
+Goal_Node = Node([1, 2, 3, 8, 0, 4, 7, 6, 5], None, Action.NoAction)
+
+print(Goal_Node)
+start_time = time.time()
+path = Best_FS(initial_node, Goal_Node)
+End_time = time.time()
+for i in path:
+    print(i)
+print("Actions:", [step.action for step in path])
+print("Total performed moves:", len(path) - 1)
+print("Execution time:", (End_time - start_time) * 1000, "ms")
+print("22172012038_Suhada")
