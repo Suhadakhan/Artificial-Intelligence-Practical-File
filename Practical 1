@@ -1,0 +1,102 @@
+class Node:
+  def __init__(self,name,child,parent):
+    self.name = name
+    self.child = child
+    self.parent = parent
+
+class Tree:
+  def __init__(self,root):
+    self.root = root
+
+  def insert_node(self,name,parent):
+    child_node = Node(name,[],parent)
+    parent.child.append(child_node)
+    return child_node
+
+  def dfs(self,root):
+    print(root.name)
+    for node in root.child:
+      tree.dfs(node)
+  def bfs_search(self, root, strfind):
+    que = []
+    que.append(root)
+    while(len(que) != 0):
+      top = que.pop(0)
+      if(top.name == strfind):
+        return top
+      else:
+        for node in top.child:
+           que.append(node)
+    return None
+  def path_find(self, node):
+    pathcost = -1
+    if(node == None):
+      return ("",pathcost)
+    else:
+        parent_list = []
+        while(node != None):
+          pathcost += 1
+          parent_list.append(node.name)
+          node = node.parent
+        new_lst = parent_list[::-1]
+        return (new_lst,pathcost)
+    
+Amit = Node('Amit',[],None)
+tree = Tree(Amit)
+
+rahul = tree.insert_node('Rahul',Amit)
+priya = tree.insert_node('Priya',Amit)
+
+sanjay = tree.insert_node('Sanjay',rahul)
+ravi = tree.insert_node('Ravi',rahul)
+nisha = tree.insert_node('Nisha',priya)
+claire = tree.insert_node('Claire',priya)
+
+deepak = tree.insert_node('Deepak',sanjay)
+raj = tree.insert_node('Raj',sanjay)
+suresh = tree.insert_node('Suresh',sanjay)
+lisa = tree.insert_node('Lisa', nisha)
+eric = tree.insert_node('Eric', claire)
+
+vinay = tree.insert_node('Vinay',deepak)
+akash = tree.insert_node('Akash',deepak)
+gaurav = tree.insert_node('Gaurav',raj)
+meena = tree.insert_node('Meena',suresh)
+sam = tree.insert_node('Sam',lisa)
+john = tree.insert_node('John',lisa)
+
+ankit = tree.insert_node('Ankit',vinay)
+harsh = tree.insert_node('Harsh',vinay)
+aditya= tree.insert_node('Aditya',gaurav)
+sneha = tree.insert_node('Sneha',gaurav)
+alice = tree.insert_node('Alice',gaurav)
+reena = tree.insert_node('Reena',meena)
+
+abhishek = tree.insert_node('Abhishek',ankit)
+puneet = tree.insert_node('Puneet',harsh)
+vikas = tree.insert_node('Vikas',harsh)
+varun = tree.insert_node('Varun',harsh)
+anjali = tree.insert_node('Anjali',sneha)
+arjun = tree.insert_node('Arjun',sneha)
+carol = tree.insert_node('Carol',alice)
+dave = tree.insert_node('Dave',alice)
+
+rohan = tree.insert_node('Rohan',abhishek)
+ajay = tree.insert_node('Ajay',abhishek)
+nidhi = tree.insert_node('Nidhi',anjali)
+sachin = tree.insert_node('Sachin',arjun)
+sumit = tree.insert_node('Sumit',arjun)
+
+aruna = tree.insert_node('Aruna',rohan)
+ramji = tree.insert_node('Ramji',rohan)
+virat = tree.insert_node('Virat',ajay)
+isha = tree.insert_node('Isha',ajay)
+prem = tree.insert_node('Prem',nidhi)
+lina = tree.insert_node('Lina',nidhi)
+
+print("22172012038")
+strfind = input("Enter name of the child: ")
+ans_node = tree.bfs_search(Amit,strfind)
+ans_list = tree.path_find(ans_node)
+print('->'.join(ans_list[0]))
++print("Path Cost: ",ans_list[1])
