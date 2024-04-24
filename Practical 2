@@ -1,0 +1,102 @@
+import time
+class Node:
+    def __init__(self, state, parent=None, action=None):
+        self.state = state
+        self.parent = parent
+        self.action = action
+
+    def __eq__(self, other):
+        return self.state == other.state
+
+    def __hash__(self):
+        return hash(self.state)
+
+class WaterJug:
+    def __init__(self, capacity_jug1, capacity_jug2, goal):
+        self.capacity_jug1 = capacity_jug1
+        self.capacity_jug2 = capacity_jug2
+        self.goal = goal
+
+    def is_valid(self, state):
+        jug1, jug2 = state
+        return 0 <= jug1 <= self.capacity_jug1 and 0 <= jug2 <= self.capacity_jug2
+
+    def successors(self, state):
+        jug1, jug2 = state
+        successors = []
+
+        # Fill jug1 
+        successors.append((self.capacity_jug1, jug2))
+
+        # Fill jug2
+        successors.append((jug1, self.capacity_jug2))
+
+        # Empty jug1
+        successors.append((0, jug2))
+
+        # Empty jug2
+        successors.append((jug1, 0))
+
+        # Pour from jug2 to jug1
+        pour_amount = min(jug2, self.capacity_jug1 - jug1)
+        successors.append((jug1 + pour_amount, jug2 - pour_amount))
+
+        # Pour from jug1 to jug2
+        pour_amount = min(jug1, self.capacity_jug2 - jug2)
+        successors.append((jug1 - pour_amount, jug2 + pour_amount))
+
+        return successors
+
+class BFS_Algorithm:
+    def __init__(self, initial_state, problem):
+        self.initial_state = initial_state
+        self.problem = problem
+
+    def search(self):
+        start_time = time.time()
+
+        frontier = [Node(self.initial_state)]
+        explored = set()
+
+        while frontier:
+            node = frontier.pop(0)
+            state = node.state
+
+            if state == self.problem.goal:
+                end_time = time.time()
+                path = self.path(node)
+                return path, len(explored), len(path), round(end_time - start_time, 5)
+
+            explored.add(node)
+
+            for child_state in self.problem.successors(state):
+                child_node = Node(child_state)
+                if child_node not in explored:
+                    frontier.append(Node(child_state, node))
+
+    def path(self, node):
+        path = []
+        while node:
+            path.append(node.state)
+            node = node.parent
+        return path[::-1]
+
+if __name__ == "__main__":
+    print("22172012038")
+    capacity_jug1 = int(input("Enter the capacity of jug1: "))
+    capacity_jug2 = int(input("Enter the capacity of jug2: "))
+    goal_jug1 = int(input("Enter the goal amount for jug1: "))
+
+    initial_state = (0, 0)
+    goal_state = (goal_jug1, 0)  # Consider only one goal state
+
+    problem = WaterJug(capacity_jug1, capacity_jug2, goal_state)
+    bfs = BFS_Algorithm(initial_state, problem)
+    path, num_explored, path_length, execution_time = bfs.search()
+
+    print("Path:", path)
+    print("Total path cost:", len(path) - 1)
+    print("Number of explored nodes:", num_explored)
+    print("Path length:", path_length)
+    print("Execution time:", execution_time, "seconds")
+
